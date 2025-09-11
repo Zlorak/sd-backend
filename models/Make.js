@@ -66,6 +66,9 @@ class Make {
     }
 
     async update() {
+        const oldMake = await Make.findById(this.id);
+        const oldName = oldMake ? oldMake.name : null;
+        
         const sql = `
             UPDATE makes 
             SET name = ?, category = ?
@@ -80,10 +83,35 @@ class Make {
 
         await database.run(sql, params);
         
+        if (oldName && oldName !== this.name) {
+            await this.updateItemReferences(oldName, this.name, this.category);
+        }
+        
         const updated = await Make.findById(this.id);
         Object.assign(this, updated);
         
         return this;
+    }
+
+    async updateItemReferences(oldName, newName, category) {
+        const tables = [];
+        
+        if (category === 'computer') {
+            tables.push('computers');
+        } else if (category === 'peripheral') {
+            tables.push('peripherals');
+        } else if (category === 'printer') {
+            tables.push('printer_items');
+        }
+        
+        for (const table of tables) {
+            const updateSql = `
+                UPDATE ${table}
+                SET make = ?
+                WHERE make = ?
+            `;
+            await database.run(updateSql, [newName, oldName]);
+        }
     }
 
     async delete() {

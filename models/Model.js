@@ -89,6 +89,9 @@ class Model {
     }
 
     async update() {
+        const oldModel = await Model.findById(this.id);
+        const oldName = oldModel ? oldModel.name : null;
+        
         const sql = `
             UPDATE models 
             SET name = ?, make_id = ?, category = ?
@@ -104,10 +107,35 @@ class Model {
 
         await database.run(sql, params);
         
+        if (oldName && oldName !== this.name) {
+            await this.updateItemReferences(oldName, this.name, this.category);
+        }
+        
         const updated = await Model.findById(this.id);
         Object.assign(this, updated);
         
         return this;
+    }
+
+    async updateItemReferences(oldName, newName, category) {
+        const tables = [];
+        
+        if (category === 'computer') {
+            tables.push('computers');
+        } else if (category === 'peripheral') {
+            tables.push('peripherals');
+        } else if (category === 'printer') {
+            tables.push('printer_items');
+        }
+        
+        for (const table of tables) {
+            const updateSql = `
+                UPDATE ${table}
+                SET model = ?
+                WHERE model = ?
+            `;
+            await database.run(updateSql, [newName, oldName]);
+        }
     }
 
     async delete() {
