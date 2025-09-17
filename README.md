@@ -32,7 +32,6 @@ A comprehensive full-stack inventory management system designed for multi-office
 
 ### 🎨 **User Experience**
 - **Dark/Light theme** toggle
-- **Responsive design** optimized for desktop and mobile
 - **Real-time validation** and error handling
 - **Modular component architecture** for maintainability
 
@@ -51,11 +50,6 @@ A comprehensive full-stack inventory management system designed for multi-office
 - **Joi** for comprehensive data validation
 - **Rate limiting** and security middleware
 - **CORS** and **Helmet** for security
-
-### **Development Tools**
-- **ESLint** for code quality
-- **Concurrently** for parallel development servers
-- **Nodemon** for automatic backend restarts
 
 ## 🚀 Quick Start
 
@@ -234,10 +228,6 @@ sd-inventory/
 - `npm run start` - Production server
 - `npm run test` - Run tests
 - `npm run lint` - Code linting
-
-## 📄 License
-
-MIT License - see LICENSE file for details
 
 ## 👥 Contributing
 
